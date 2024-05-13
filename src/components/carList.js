@@ -11,9 +11,9 @@ const CarList = () => {
   }, []);
 
   const getCars = async () => {
-    const response = await axios.get(`${baseUrl}/api/v1/cars/car`);
-    console.log(response.data.data);
-    setCars(response.data.data);
+    const response = await axios.get(`${baseUrl}/api/v1/tours/getAll`);
+    console.log(response.data.data.tourPackages);
+    setCars(response.data.data.tourPackages);
   };
 
   const deleteCar = async (id) => {
@@ -35,8 +35,8 @@ const CarList = () => {
           <thead>
             <tr>
               <th>No</th>
-              <th>Model</th>
-              <th>Type</th>
+              <th>Name</th>
+              <th>City</th>
               <th>Price</th>
               <th>Image</th>
               <th>Actions</th>
@@ -46,10 +46,10 @@ const CarList = () => {
             {cars.map((user, index) => (
               <tr key={user.id}>
                 <td>{index + 1}</td>
-                <td>{user.model}</td>
-                <td>{user.type}</td>
+                <td>{user.packageName}</td>
+                <td>{user.destination}</td>
                 <td>{user.price}</td>
-                <img src={user.imageUrl}></img>
+                <img src={user.image}></img>
                 <td>
                   <Link
                     to={`edit/${user.id}`}

@@ -4,8 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { baseUrl } from "../utils";
 
 const EditCar = () => {
-  const [model, setModel] = useState("");
-  const [type, setType] = useState("");
+  const [packageName, setPackageName] = useState("");
+  const [description, setDescription] = useState("");
+  const [destination, setDestination] = useState("");
+  const [duration, setDuration] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState();
   const navigate = useNavigate();
@@ -19,60 +21,95 @@ const EditCar = () => {
     console.log("ini handle file", event.target.files)
     setImage(event.target.files[0]);
   };
-  // const saveCar = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append('model', model);
-  //     formData.append('type', type);
-  //     formData.append('price', price);
-  //     formData.append('image', image);
+  const saveTour = async (e) => {
+    e.preventDefault();
+    try {
+      const tourData = {
+        packageName: packageName,
+        description: description,
+        destination: destination,
+        duration: duration,
+        price: price,
+        image: image // Assuming image is already in a format suitable for JSON
+      };
 
-  //     console.log(formData);
-  //     console.log("model: " + model, type, price, image);
-  //     await axios.post(`${baseUrl}/api/v1/cars/create`, formData, {
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data'
-  //       }
-  //     });
-  //     navigate("/");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  const getCarById = async () => {
-    const response = await axios.get(`${baseUrl}api/v1/cars/${id}`);
-    console.log(response.data.data)
-    setModel(response.data.data.model);
-    setType(response.data.data.type);
-    setPrice(response.data.data.price);
-    setImage(response.data.data.imageUrl);
+      console.log(tourData);
+      console.log("model: " + packageName, description, destination, duration);
+      await axios.patch(`${baseUrl}/api/v1/tours/update/${id}`, tourData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
+  const getCarById = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/api/v1/tours/${id}`);
+      console.log(response.data.data.tourPackage); // Check the response data to ensure it contains the expected car information
+      const tourData = response.data.data.tourPackage; // Assuming the car data is nested under the 'data' key
+      setPackageName(tourData.packageName); // Update state with the correct property names
+      setDescription(tourData.description);
+      setDestination(tourData.destination);
+      setDuration(tourData.duration);
+      setPrice(tourData.price);
+      setImage(tourData.image);
+      console.log("ini data", packageName, description, price, description, duration)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="columns mt-5 is-centered">
       <div className="column is-half">
-        <form encType="multipart/form-data">
+        <form onSubmit={saveTour} encType="multipart/form-data">
           <div className="field">
-            <label className="label">Model</label>
+            <label className="label">packageName</label>
             <div className="control">
               <input
                 type="text"
                 className="input"
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
+                value={packageName}
+                onChange={(e) => setPackageName(e.target.value)}
                 placeholder="Name"
               />
             </div>
           </div>
           <div className="field">
-            <label className="label">Type</label>
+            <label className="label">description</label>
             <div className="control">
               <input
                 type="text"
                 className="input"
-                value={type}
-                onChange={(e) => setType(e.target.value)}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Email"
+              />
+            </div>
+          </div>
+          <div className="field">
+            <label className="label">destination</label>
+            <div className="control">
+              <input
+                type="text"
+                className="input"
+                value={destination}
+                onChange={(e) => setDestination(e.target.value)}
+                placeholder="Email"
+              />
+            </div>
+          </div>
+          <div className="field">
+            <label className="label">duration</label>
+            <div className="control">
+              <input
+                type="text"
+                className="input"
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
                 placeholder="Email"
               />
             </div>
